@@ -1,0 +1,107 @@
+# lsp: Lisp Sans Parens. and postfix. and awesome.
+
+# Hash marks start single line comments.
+
+# Postfix b/c the code should eval in the order I read.
+1 2 +       # Yields 3
+# Binary operators typed as 'f(_, A) -> A' auto-fold over variadic arguments.
+1 2 3 +     # Yields 6
+
+# $ means 'eval whatever is to the left and pretend it was just a single
+# argument to whatever follows'
+1 2 + $     # Yields 3 (like above when there was no $)
+1 2 + $ 3 * # Yields 9
+1 2 + 3 *   # Error: can't call * on 3 and +
+
+# Or indent to run on result of line above
+1 2 +
+ 3 *       # Yields 9
+# Indentation can be tabs or spaces, but not both; using both in a single chain
+# of commands causes a syntax error
+
+# ! makes its arguments into a list
+1 2 3 !    # (Pythonic) [1, 2, 3]    (CommonLispesque) '(1 2 3)
+
+# newline actually means 'eval'
+1          # Yields 1 (values are implicitly nullary functions that yield their value)
+
+# space is actually 'cons'
+1 2        # Yields the list 1 2 (a list is a value)
+
+# NULL < null < nil < n
+1 2 n      # (CommonLispesque) Yields '(1 2)  (lsp) Yields 1 2 n
+
+# Values can be named
+1:x        # Yields x
+x          # Yields 1
+
+# _ means parameter
+_ 1 +:fn   # Yields fn
+2 fn       # Yields 3
+# names in scope can be shadowed
+_ 1 *:fn   # Yields fn
+2 fn       # Yields 2
+
+# functions are values
+1 _:fn       # fn is a function of one argument that, when run, runs its argument, giving it 1 as a parameter
+_ 3 + fn     # Yields 4
+3 _ + fn     # Yields 4
+4 _ + fn:fun # Yields fun
+5 fun        # Yields (4 5 + fn) => (1 4 5 +) => 10
+
+# . prints values to stdout
+1 .        # Sends the cstring "1\n" to stdout
+
+# Strings are nothing new
+"I'm a a string!" # Yields a string with value "I'm a string!"
+'Can you say "string"?' # Yields a string with value "Can you say \"string\"?'
+"""I don't mind shamelessly stealing from python.
+Strings with embedded newlines in them are just too darn useful.
+And I'm still not sure how I feel about 'here-docs' a.la. bash""" # Just a string; see/thank python
+
+# Names can have pretty much anything but whitespace and :
+this-is-a-name?!:yep
+
+# if like forth/factor
+cond if then-clause else-clause
+
+# loops
+cond while $ loop-body
+lower upper foreach $ loop-body
+lower upper incr for $ loop-body
+
+# : is actually a function that takes a value and a token and updates the current environment
+# with a record that says "when you see this token, it means this value"
+
+# Every function really only takes 1 parameter; a list of its paramters. Most
+# functions will only work properly if they get a list of the right size. If it
+# can be determined statically that a function is of a fixed arity, trying to
+# call the function with a differently sized list will complain loudly during
+# 'compilation'.
+
+# Compilation is guaranteed to ocurr before the code runs but, since you can
+# run the code as a script, telling the difference between a static error and a
+# dynamic error is your problem though if the interpeter is worth using, it'll
+# let you know.
+
+# TODO: pattern matching like Haskell
+# <lambda><colon>[<type-assertion><space>]<name>
+
+# TODO: a 'module' is a list of names that share a prefix. The
+# '<modname>.<exportedname>' stuff one might see is merely a convention; the
+# module's true name is '<modname>.'.
+
+# TODO: dynamic scoping with (disableable, nescessarily incomplete) static
+# assertions against obviously wrong things.
+
+# TODO: named tuples; a list of type assertions introducing a type name
+
+# TODO: tuple type names; a list of type assertion assertions introducing a new kind
+# TODO: repeat
+# TODO: programmatic extension/manipulation of the type system
+# TODO: programmatic extension/manipulation of the environment
+# TODO: programmatic extension/manipulation of the syntax
+
+
+
+
