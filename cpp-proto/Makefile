@@ -1,8 +1,9 @@
 BIN:=$(notdir $(shell pwd))
 SRCFILES:=$(shell find src/ -name *.cpp)
-TMPOBJS:=${SRCFILES:.c=.o}
+TMPOBJS:=${SRCFILES:.cpp=.o}
 OBJFILES:=${foreach TMP,$(TMPOBJS),$(subst src/,obj/,$(TMP))}
 CC=gcc
+CXXFLAGS=-std=c++0x
 INCLUDES:=-Isrc/
 
 all : obj ${BIN}
@@ -10,11 +11,13 @@ all : obj ${BIN}
 obj :
 	mkdir -p obj/
 
-obj/%.o : src/%.c
-	${CPP} -c $^ ${INCLUDES} -o $@
+obj/%.o : src/%.cpp
+	@mkdir -p $(@D)
+	${CXX} ${CXXFLAGS} -c $^ ${INCLUDES} -o $@
 
 ${BIN} : ${OBJFILES}
-	${CPP} $^ -o $@
+	@mkdir -p $(@D)
+	${CXX} $^ -o $@
 
 
 clean :

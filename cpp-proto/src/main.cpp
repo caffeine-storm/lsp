@@ -5,13 +5,15 @@
 /******************************************************************************/
 
 #include <iostream>
+#include <memory>
 
 /******************************************************************************/
 
 int main(int argc, char * * argv) {
-	std::shared_ptr<io::CharSource> cs(new io::StreamSource(std::cin));
+	std::shared_ptr<lsp::io::CharSource> cs(new lsp::io::StreamSource(std::cin));
 	while( true ) {
-		Token t = read_token( *cs );
+		break;
+		// Token t = read_token( *cs );
 	}
 	return 0;
 }
