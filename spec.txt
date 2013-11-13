@@ -74,7 +74,7 @@ lower upper incr for $ loop-body
 # with a record that says "when you see this token, it means this value"
 
 # Every function really only takes 1 parameter; a list of its paramters. Most
-# functions will only work properly if they get a list of the right size. If it
+# functions will only work properly if they get a list of the right size. If it`
 # can be determined statically that a function is of a fixed arity, trying to
 # call the function with a differently sized list will complain loudly during
 # 'compilation'.
@@ -103,5 +103,7 @@ lower upper incr for $ loop-body
 # TODO: programmatic extension/manipulation of the syntax
 
 
+
+================================================================================
 
 
