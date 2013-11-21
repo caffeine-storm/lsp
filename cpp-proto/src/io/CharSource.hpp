@@ -14,7 +14,7 @@ public:
 		return next_();
 	}
 
-	char peek() {
+	char peek() const {
 		return peek_();
 	}
 

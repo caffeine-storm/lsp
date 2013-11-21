@@ -1,39 +1,34 @@
-#include <io/StreamSource.hpp>
+#ifndef LSP_RUNTIME_HPP
+#define LSP_RUNTIME_HPP
 
 /******************************************************************************/
 
-#include <string>
+#include <vector>
+#include <memory>
 
 /******************************************************************************/
 
 namespace lsp {
-namespace io {
 
 /******************************************************************************/
 
-
-StreamSource::StreamSource( std::istream & in )
-	: src_( in )
-{
+namespace parser {
+class Token;
 }
 
 /******************************************************************************/
 
-char StreamSource::next_() {
-	return src_.get();
+namespace lang {
+class Value;
 }
 
 /******************************************************************************/
 
-char StreamSource::peek_() const {
-	return src_.peek();
-}
+namespace runtime {
 
 /******************************************************************************/
 
-bool StreamSource::has_more_() const {
-	return src_.peek() != std::char_traits<char>::eof();
-}
+lang::Value eval(std::vector<std::shared_ptr<parser::Token>> const & v);
 
 /******************************************************************************/
 
@@ -42,3 +37,4 @@ bool StreamSource::has_more_() const {
 
 /******************************************************************************/
 
+#endif /* LSP_RUNTIME_HPP */
