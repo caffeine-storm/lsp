@@ -7,6 +7,7 @@
 
 /******************************************************************************/
 
+#include <sstream>
 #include <string>
 
 /******************************************************************************/
@@ -17,16 +18,17 @@ namespace lang {
 /******************************************************************************/
 
 class UnboundName : public LspException {
+private:
+	std::string make_message(std::string const & name) {
+		std::stringstream msg;
+		msg << "Couldn't find name '" << name << "'";
+		return msg.str();
+	}
+
 public:
 	explicit
 	UnboundName(std::string const & name)
-		: LspException(name)
-	{
-	}
-
-	explicit
-	UnboundName(std::string && name)
-		: LspException(std::move(name))
+		: LspException(make_message(name))
 	{
 	}
 
