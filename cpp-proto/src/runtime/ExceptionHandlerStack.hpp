@@ -1,10 +1,9 @@
-#ifndef LSP_RUNTIME_HPP
-#define LSP_RUNTIME_HPP
+#ifndef LSP_RUNTIME_EXCEPTIONHANDLERSTACK_HPP
+#define LSP_RUNTIME_EXCEPTIONHANDLERSTACK_HPP
 
 /******************************************************************************/
 
-#include <vector>
-#include <memory>
+#include <stack>
 
 /******************************************************************************/
 
@@ -12,14 +11,8 @@ namespace lsp {
 
 /******************************************************************************/
 
-namespace parser {
-class Token;
-}
-
-/******************************************************************************/
-
 namespace lang {
-class Value;
+class LspException;
 }
 
 /******************************************************************************/
@@ -28,11 +21,14 @@ namespace runtime {
 
 /******************************************************************************/
 
-class ExceptionHandlerStack;
+class ExceptionHandlerStack {
+public:
+	void handle(lang::LspException & e);
 
-/******************************************************************************/
+private:
+	std::stack<void *> handlers_;
 
-lang::Value eval(std::vector<std::shared_ptr<parser::Token>> const & v, ExceptionHandlerStack & handlers);
+};
 
 /******************************************************************************/
 
@@ -41,4 +37,5 @@ lang::Value eval(std::vector<std::shared_ptr<parser::Token>> const & v, Exceptio
 
 /******************************************************************************/
 
-#endif /* LSP_RUNTIME_HPP */
+#endif /* LSP_RUNTIME_EXCEPTIONHANDLERSTACK_HPP */
+

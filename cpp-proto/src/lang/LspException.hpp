@@ -1,9 +1,5 @@
-#ifndef LSP_LANG_UNBOUNDNAME_HPP
-#define LSP_LANG_UNBOUNDNAME_HPP
-
-/******************************************************************************/
-
-#include <lang/LspException.hpp>
+#ifndef LSP_LANG_LSPEXCEPTION_HPP
+#define LSP_LANG_LSPEXCEPTION_HPP
 
 /******************************************************************************/
 
@@ -16,21 +12,26 @@ namespace lang {
 
 /******************************************************************************/
 
-class UnboundName : public LspException {
+class LspException {
 public:
 	explicit
-	UnboundName(std::string const & name)
-		: LspException(name)
+	LspException(std::string const & s)
+		: msg_(s)
 	{
 	}
 
 	explicit
-	UnboundName(std::string && name)
-		: LspException(std::move(name))
+	LspException(std::string && s)
+		: msg_(std::move(s))
 	{
 	}
 
-	virtual ~UnboundName() throw() {}
+	std::string const & msg() const {
+		return msg_;
+	}
+
+private:
+	std::string msg_;
 
 };
 
@@ -41,5 +42,5 @@ public:
 
 /******************************************************************************/
 
-#endif /* LSP_LANG_UNBOUNDNAME_HPP */
+#endif /* LSP_LANG_LSPEXCEPTION_HPP */
 
