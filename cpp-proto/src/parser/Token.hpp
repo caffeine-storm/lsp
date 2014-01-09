@@ -12,11 +12,20 @@ namespace parser {
 
 /******************************************************************************/
 
+enum class TokenType {
+	NAME,
+	INT_LIT,
+	STR_LIT
+};
+
+/******************************************************************************/
+
 class Token {
 public:
 	explicit
-	Token(std::string const & val):
-		val_(val)
+	Token(std::string const & val, TokenType tp)
+		: val_(val),
+		tp_(tp)
 	{
 	}
 
@@ -37,8 +46,13 @@ public:
 		return val_;
 	}
 
+	TokenType type() const {
+		return tp_;
+	}
+
 private:
 	std::string val_;
+	TokenType tp_;
 
 };
 

@@ -68,7 +68,7 @@ int main(int argc, char * * argv) {
 	std::vector<std::shared_ptr<parser::Token>> cur_expr;
 	lsp::runtime::ExceptionHandlerStack hdl_stack;
 
-	while( true ) {
+	while(true) {
 		if(cur_expr.empty()) {
 			// Only print the prompt when we expect a new expression
 			print_prompt();
