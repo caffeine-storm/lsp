@@ -1,11 +1,43 @@
 # lsp: Lisp Sans Parens. and postfix. and awesome.
 
+# Guiding principles:
+# - all values are immutable
+# - a function takes as input and produces as output a list of values
+#   - with referential transparency
+# - a function declaration takes as input and produces as output a lexical
+#   context, environment or namespace
+#   - if a namespace is a value, we can use functions in place of function
+#     declarations
+# - a function definition takes as input a set of evaluation semantics and
+#   produces a function
+
+# How can we do I/O?
+# - consider a function that
+#   - given
+#     - a black-box with
+#       - labled levers
+#       - an input tray
+#       - an output tray
+#     - an queryable state
+#   - produce
+#     - a choice of
+#       - setting a value in the input tray
+#       - reading a value from the output tray
+#       - pulling a labled lever
+#     - a new queryable state
+#   - by querying the given state
+# - if the black-box's labels are syscalls that take parameters from the input
+#   tray and write results to the ouptut tray...
+
 # Hash marks start single line comments.
 
 # Postfix b/c the code should eval in the order I read.
-1 2 +       # Yields 3
-# Binary operators typed as 'f(_, A) -> A' auto-fold over variadic arguments.
-1 2 3 +     # Yields 6
+1 2 +        # Yields 3
+# Builtin operators typed as 'f(_, A) -> A' do not auto-fold over variadic
+# arguments...
+1 2 3 +      # Arity error: can't apply binary '+' over three arguments
+# ... that's what fold is for
+1 2 3 + fold # Yields 6
 
 # $ means 'eval whatever is to the left and pretend it was just a single
 # argument to whatever follows'
@@ -19,28 +51,34 @@
 # Indentation can be tabs or spaces, but not both; using both in a single chain
 # of commands causes a syntax error
 
-# ! makes its arguments into a list
-1 2 3 !    # (Pythonic) [1, 2, 3]    (CommonLispesque) '(1 2 3)
 
 # newline actually means 'eval'
 1          # Yields 1 (values are implicitly nullary functions that yield their value)
 
 # space is actually 'cons'
-1 2        # Yields the list 1 2 (a list is a value)
+1 2        # Yields the list 1 2 (a list is a value => a list is a nullary function that yields itself)
+
+# lists are heterogenous
+1 2 $ 3   # (Pythonic) [[1, 2], 3]    (CommonLispesque) '((1 2) 3)
 
 # NULL < null < nil < n
 1 2 n      # (CommonLispesque) Yields '(1 2)  (lsp) Yields 1 2 n
 
 # Values can be named
-1:x        # Yields x
-x          # Yields 1
+1:x        # Yields 1
+
+# The namespace is immutable...
+x          # Error: unbound name 'x'
+
+# ... but each expression can add to their local namespace.
+21:x x +   # Yields 42
 
 # _ means parameter
-_ 1 +:fn   # Yields fn
-2 fn       # Yields 3
+_ 1 +:fn   # Yields a function
+ 2 fn       # Yields 3
 # names in scope can be shadowed
-_ 1 *:fn   # Yields fn
-2 fn       # Yields 2
+ _ 1 *:fn   # Yields fn
+  2 fn       # Yields 2
 
 # functions are values
 1 _:fn       # fn is a function of one argument that, when run, runs its argument, giving it 1 as a parameter
@@ -54,7 +92,7 @@ _ 3 + fn     # Yields 4
 
 # Strings are nothing new
 "I'm a a string!" # Yields a string with value "I'm a string!"
-'Can you say "string"?' # Yields a string with value "Can you say \"string\"?'
+'Can you say "string"?' # Yields a string with value "Can you say \"string\"?"
 """I don't mind shamelessly stealing from python.
 Strings with embedded newlines in them are just too darn useful.
 And I'm still not sure how I feel about 'here-docs' a.la. bash""" # Just a string; see/thank python
@@ -70,11 +108,12 @@ cond while $ loop-body
 lower upper foreach $ loop-body
 lower upper incr for $ loop-body
 
-# : is actually a function that takes a value and a token and updates the current environment
-# with a record that says "when you see this token, it means this value"
+# : is actually a function that takes a value and a token and updates the
+# current environment with a record that says "when you see this token, it
+# means this value"
 
 # Every function really only takes 1 parameter; a list of its paramters. Most
-# functions will only work properly if they get a list of the right size. If it`
+# functions will only work properly if they get a list of the right size. If it
 # can be determined statically that a function is of a fixed arity, trying to
 # call the function with a differently sized list will complain loudly during
 # 'compilation'.
