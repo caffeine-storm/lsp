@@ -14,6 +14,6 @@ int reader_read( reader_type * rdr, FILE * from, expr_type * result ) {
 	(void) rdr;
 	(void) from;
 	(void) result;
-	return 1;
+	return read_result_fatal;
 }
 

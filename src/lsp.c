@@ -44,9 +44,15 @@ int main( int argc, char * * argv ) {
 		expr_init( &expr );
 
 		int ret = reader_read( &reader, stdin, &expr );
-		if( !ret ) {
-			printf( "read-failure: <TODO: descriptive error message>\n" );
-			continue;
+		switch( ret ) {
+			case read_result_fail:
+				printf( "read-failure: <TODO: descriptive error message>\n" );
+				continue;
+			case read_result_fatal:
+				printf( "fatal read failure: <TODO: debug info from reader>\n" );
+				exit( 1 );
+			case read_result_ok:
+				;
 		}
 
 		ret = eval( &stack, &expr );

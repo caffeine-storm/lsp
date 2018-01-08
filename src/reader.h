@@ -5,6 +5,12 @@
 
 #include <stdio.h>
 
+enum read_result {
+	read_result_ok,
+	read_result_fail,
+	read_result_fatal
+};
+
 typedef struct {
 } reader_type;
 
