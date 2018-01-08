@@ -1,16 +1,21 @@
 BIN:=lsp
-OBJECTS:=obj/lsp.o
-CFLAGS:=-std=c99 -Wall -g
-LDFLAGS:=-std=c99
+OBJECTS:=$(patsubst src/%.c,obj/%.o,$(wildcard src/*.c))
+CFLAGS:=-std=c11 -Wall -Wextra -g -Isrc/
+LDFLAGS:=-std=c11
 
 all: ${BIN}
 
 obj:
 	mkdir -p obj
 
-obj/%.o: src/%.c obj
-	gcc -c $< ${CFLAGS} -o $@
+obj/%.o: src/%.c |obj
+	${CC} -c $< ${CFLAGS} -o $@
 
 ${BIN}: ${OBJECTS}
-	gcc $^ ${LDFLAGS} -o $@
+	${CC} -o $@ ${LDFLAGS} $^
+
+clean:
+	rm -rf obj ${BIN}
+
+.PHONY: clean
 
