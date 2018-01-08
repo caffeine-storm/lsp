@@ -4,7 +4,8 @@
 enum EXPR_TYPE {
 	EXPR_TYPE_NIL,
 	EXPR_TYPE_SYMBOL,
-	EXPR_TYPE_INT
+	EXPR_TYPE_INT,
+	EXPR_TYPE_EOF
 };
 
 typedef struct {
@@ -20,6 +21,8 @@ void expr_denit( expr_type * expr );
 
 int expr_get_int( expr_type * expr );
 void expr_set_int( expr_type * expr, int val );
+
+void expr_set_eof( expr_type * expr );
 
 char * expr_get_symbol( expr_type * expr );
 

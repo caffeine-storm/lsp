@@ -22,6 +22,10 @@ void printer_print( printer_type * printer, expr_type * expr, FILE * out ) {
 			fprintf( out, "%d", expr_get_int( expr ) );
 			return;
 		}
+		case EXPR_TYPE_EOF: {
+			fprintf( out, "<EOF>" );
+			return;
+		}
 		default: {
 			// fall-through
 		}
