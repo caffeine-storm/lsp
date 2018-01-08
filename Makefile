@@ -5,6 +5,9 @@ LDFLAGS:=-std=c11
 
 all: ${BIN}
 
+check: ${BIN}
+	./test/smoke.sh
+
 obj:
 	mkdir -p obj
 
@@ -17,5 +20,5 @@ ${BIN}: ${OBJECTS}
 clean:
 	rm -rf obj ${BIN}
 
-.PHONY: clean
+.PHONY: clean check
 
