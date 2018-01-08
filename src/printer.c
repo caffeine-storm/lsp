@@ -19,7 +19,7 @@ void printer_print( printer_type * printer, expr_type * expr, FILE * out ) {
 			return;
 		}
 		case EXPR_TYPE_INT: {
-			fprintf( out, "%d", expr_get_int( expr )  );
+			fprintf( out, "%d", expr_get_int( expr ) );
 			return;
 		}
 		default: {

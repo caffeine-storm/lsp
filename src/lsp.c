@@ -86,6 +86,6 @@ int main( int argc, char * * argv ) {
 		printer_print( &printer, top, stdout );
 	}
 
-    return 0;
+	return 0;
 }
 
