@@ -15,11 +15,8 @@ void stack_item_denit( stack_item_type * item ) {
 }
 
 void stack_init( stack_type * stack ) {
-	expr_type * canary = malloc( sizeof( expr_type ) );
-	expr_init( canary );
-	expr_set_int( canary, 0 );
+	stack->top = NULL;
 	stack->size = 0;
-	stack_push( stack, canary );
 }
 
 int stack_push( stack_type * stack, expr_type * expr ) {
