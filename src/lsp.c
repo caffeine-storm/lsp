@@ -19,9 +19,16 @@ void print_prompt( FILE * out ) {
 }
 
 int eval( stack_type * stack, expr_type * expr ) {
-	// TODO: implement eval :p
 	(void) stack;
-	(void) expr;
+	switch( expr->type_code ) {
+		case EXPR_TYPE_SYMBOL:
+			// TODO: implement me
+			LSP_ABORT( "niy" );
+		case EXPR_TYPE_EOF:
+			return EVAL_EXIT;
+		default:
+			return EVAL_PUSH_EXPR;
+	}
 	return EVAL_EXIT;
 }
 
@@ -40,13 +47,15 @@ int main( int argc, char * * argv ) {
 	while( 1 ) {
 		print_prompt( stdout );
 
-		expr_type expr;
-		expr_init( &expr );
+		expr_type * expr = malloc( sizeof( expr_type ) );
+		expr_init( expr );
 
-		int ret = reader_read( &reader, stdin, &expr );
+		int ret = reader_read( &reader, stdin, expr );
 		switch( ret ) {
 			case read_result_fail:
 				printf( "read-failure: <TODO: descriptive error message>\n" );
+				expr_denit( expr );
+				free( expr );
 				continue;
 			case read_result_fatal:
 				printf( "fatal read failure: <TODO: debug info from reader>\n" );
@@ -55,22 +64,18 @@ int main( int argc, char * * argv ) {
 				;
 		}
 
-		ret = eval( &stack, &expr );
+		ret = eval( &stack, expr );
 		switch( ret ) {
 			case EVAL_PUSH_EXPR: {
-				stack_push( &stack, &expr );
+				stack_push( &stack, expr );
 				break;
 			}
 			case EVAL_EXIT: {
-				expr_denit( &expr );
+				expr_denit( expr );
+				free( expr );
 
 				printf( "Goodbye!\n" );
-
-				expr_type * temp = stack_top( &stack );
-				LSP_ASSERT( temp->type_code == EXPR_TYPE_INT, "exit requires an int!" );
-				int return_code = expr_get_int( temp );
-
-				exit( return_code );
+				exit( 0 );
 			}
 			case EVAL_ERROR: {
 				// TODO: print an error message that eval will push on the stack
