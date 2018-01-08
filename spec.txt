@@ -11,24 +11,6 @@
 # - a function definition takes as input a set of evaluation semantics and
 #   produces a function
 
-# How can we do I/O?
-# - consider a function that
-#   - given
-#     - a black-box with
-#       - labled levers
-#       - an input tray
-#       - an output tray
-#     - an queryable state
-#   - produce
-#     - a choice of
-#       - setting a value in the input tray
-#       - reading a value from the output tray
-#       - pulling a labled lever
-#     - a new queryable state
-#   - by querying the given state
-# - if the black-box's labels are syscalls that take parameters from the input
-#   tray and write results to the ouptut tray...
-
 # Hash marks start single line comments.
 
 # Postfix b/c the code should eval in the order I read.
