@@ -25,5 +25,6 @@ void expr_set_int( expr_type * expr, int val );
 void expr_set_eof( expr_type * expr );
 
 char * expr_get_symbol( expr_type * expr );
+void expr_set_symbol( expr_type * expr, char * sym );
 
 #endif

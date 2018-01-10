@@ -42,3 +42,8 @@ char * expr_get_symbol( expr_type * expr ) {
 	return expr->val.symbol;
 }
 
+void expr_set_symbol( expr_type * expr, char * sym ) {
+	expr->type_code = EXPR_TYPE_SYMBOL;
+	expr->val.symbol = sym;
+}
+

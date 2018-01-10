@@ -29,18 +29,19 @@ int eval( stack_type * stack, expr_type * expr ) {
 		default:
 			return EVAL_PUSH_EXPR;
 	}
-	return EVAL_EXIT;
 }
 
 int main( int argc, char * * argv ) {
 	(void) argc;
 	(void) argv;
 
+	int ret;
+
 	stack_type stack;
 	stack_init( &stack );
 
 	reader_type reader;
-	reader_init( &reader );
+	ret = reader_init( &reader, stdin );
 
 	printer_type printer;
 
@@ -50,7 +51,9 @@ int main( int argc, char * * argv ) {
 		expr_type * expr = malloc( sizeof( expr_type ) );
 		expr_init( expr );
 
-		int ret = reader_read( &reader, stdin, expr );
+		printf( "debug: lsp: going to read next\n" );
+		ret = reader_read_next( &reader, expr );
+		printf( "debug: lsp: read returned %d\n", ret );
 		switch( ret ) {
 			case read_result_fail:
 				printf( "read-failure: <TODO: descriptive error message>\n" );
@@ -87,6 +90,7 @@ int main( int argc, char * * argv ) {
 			}
 		}
 
+		printf( "debug: going to print top of stack\n" );
 		expr_type * top = stack_top( &stack );
 		printer_print( &printer, top, stdout );
 	}
