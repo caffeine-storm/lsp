@@ -1,5 +1,6 @@
 #include <expr.h>
 #include <lsp_assert.h>
+#include <lsp_print.h>
 #include <printer.h>
 #include <reader.h>
 #include <stack.h>
@@ -51,9 +52,9 @@ int main( int argc, char * * argv ) {
 		expr_type * expr = malloc( sizeof( expr_type ) );
 		expr_init( expr );
 
-		printf( "debug: lsp: going to read next\n" );
+		TRACE( "going to read next" );
 		ret = reader_read_next( &reader, expr );
-		printf( "debug: lsp: read returned %d\n", ret );
+		TRACE( "read returned %d", ret );
 		switch( ret ) {
 			case read_result_fail:
 				printf( "read-failure: <TODO: descriptive error message>\n" );
@@ -90,7 +91,7 @@ int main( int argc, char * * argv ) {
 			}
 		}
 
-		printf( "debug: going to print top of stack\n" );
+		TRACE( "debug: going to print top of stack" );
 		expr_type * top = stack_top( &stack );
 		printer_print( &printer, top, stdout );
 	}

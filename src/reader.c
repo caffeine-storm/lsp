@@ -1,6 +1,7 @@
 #include <reader.h>
 
 #include <lsp_assert.h>
+#include <lsp_print.h>
 
 #include <errno.h>
 #include <string.h>
@@ -47,9 +48,9 @@ int reader_read_next( reader_type * rdr, expr_type * result ) {
 	int ret = 0;
 	// If nothing is buffered yet, pull more characters from the input stream
 	if( !char_buffer_buffered( rdr->buf ) ) {
-		printf( "debug: nothing buffered\n" );
+		DEBUG( "nothing buffered" );
 		ret = char_buffer_more( rdr->buf );
-		printf( "debug: buffer_more returned %d\n", ret );
+		DEBUG( "buffer_more returned %d", ret );
 		if( !ret ) {
 			// Was that eof, or error?
 			if( char_buffer_eof( rdr->buf ) ) {
@@ -66,7 +67,7 @@ int reader_read_next( reader_type * rdr, expr_type * result ) {
 	char const * end = char_buffer_end( rdr->buf );
 
 	void yield_int( int n ) {
-		printf("debug: reader: yielding int (%d)\n", n );
+		DEBUG( "reader: yielding int (%d)", n );
 		expr_set_int( result, n );
 	}
 	rdr->callbacks.on_int = &yield_int;
@@ -82,9 +83,9 @@ int reader_read_next( reader_type * rdr, expr_type * result ) {
 
 	while( 1 ) {
 		size_t num_read;
-		printf( "debug: going to scan\n" );
+		DEBUG( "going to scan" );
 		ret = scanner_scan( rdr->scanner, begin, end, &num_read, &rdr->callbacks );
-		printf( "debug: scanner_scan returned %d\n", ret );
+		DEBUG( "scanner_scan returned %d", ret );
 		switch( ret ) {
 			case scanner_scan_ignore: {
 				char_buffer_seek( rdr->buf, num_read );

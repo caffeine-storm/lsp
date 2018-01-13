@@ -1,6 +1,7 @@
 #include <scanner.h>
 
 #include <lsp_assert.h>
+#include <lsp_print.h>
 
 #include <ctype.h>
 #include <errno.h>
@@ -56,7 +57,7 @@ int parse_int( char const * begin, char const * end, int * out ) {
 		return 1;
 	}
 
-	printf( "debug: parse_int parsed an int (%d)\n", *out );
+	DEBUG( "parse_int parsed an int (%d)", *out );
 	return 0;
 }
 

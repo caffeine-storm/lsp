@@ -1,6 +1,7 @@
 #include <char_buffer.h>
 
 #include <lsp_assert.h>
+#include <lsp_print.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -79,7 +80,7 @@ int guarantee_extra_space( char_buffer_type * buf, size_t request ) {
 		new_buf_sz = old_sz + request;
 	}
 	char * new_buf = malloc( new_buf_sz );
-	printf( "debug: char_buffer: allocated %ld bytes\n", new_buf_sz );
+	DEBUG( "char_buffer: allocated %ld bytes", new_buf_sz );
 	if( !new_buf ) {
 		return 1;
 	}
@@ -95,19 +96,19 @@ int guarantee_extra_space( char_buffer_type * buf, size_t request ) {
 
 size_t char_buffer_more( char_buffer_type * buf ) {
 	// Extend 'data' with more bytes from the input stream.
-	printf( "debug: eof?\n" );
+	DEBUG( "eof?" );
 	if( char_buffer_eof( buf ) ) {
-		printf( "debug: eof? -> yep\n" );
+		DEBUG( "eof? -> yep" );
 		return 0;
 	}
-	printf( "debug: eof? -> nope\n" );
+	DEBUG( "eof? -> nope" );
 
 	int ret = guarantee_extra_space( buf, 512 );
 	if( ret ) {
 		LSP_ABORT( "failed to allocate memory for a char_buffer" );
 	}
 
-	printf( "debug: going to fgets...\n" );
+	DEBUG( "going to fgets..." );
 	char * s = fgets( buf->end, 512, buf->from );
 	if( !s ) {
 		if( feof( buf->from ) ) {
@@ -116,7 +117,7 @@ size_t char_buffer_more( char_buffer_type * buf ) {
 		LSP_ABORT( "fgets failed" );
 	}
 	size_t num_read = strlen( buf->end );
-	printf( "debug: read %ld bytes\n", num_read );
+	DEBUG( "read %ld bytes", num_read );
 	buf->end += num_read;
 
 	return num_read;
