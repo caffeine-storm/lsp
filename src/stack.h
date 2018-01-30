@@ -24,5 +24,7 @@ int stack_push( stack_type * stack, expr_type * expr );
 void stack_pop( stack_type * stack );
 
 expr_type * stack_top( stack_type * stack );
+size_t stack_size( stack_type * stack );
+expr_type * stack_at( stack_type * stack, size_t n );
 
 #endif

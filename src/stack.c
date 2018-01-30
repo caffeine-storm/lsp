@@ -47,3 +47,20 @@ void stack_pop( stack_type * stack ) {
 expr_type * stack_top( stack_type * stack ) {
 	return stack->top->val;
 }
+
+size_t stack_size( stack_type * stack ) {
+	return stack->size;
+}
+
+expr_type * stack_at( stack_type * stack, size_t n ) {
+	stack_item_type * itr = stack->top;
+	size_t i = 0;
+	while( itr && i < n ) {
+		itr = itr->prev;
+		++i;
+	}
+	if( i != n || !itr ) {
+		return NULL;
+	}
+	return itr->val;
+}
