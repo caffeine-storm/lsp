@@ -4,6 +4,17 @@
 #include <stdlib.h>
 #include <string.h>
 
+expr_type * make_expr() {
+	expr_type * ret = malloc( sizeof( expr_type ) );
+	expr_init( ret );
+	return ret;
+}
+
+void kill_expr( expr_type * e ) {
+	expr_denit( e );
+	free( e );
+}
+
 void expr_init( expr_type * expr ) {
 	expr->type_code = EXPR_TYPE_NIL;
 	memset( &expr->val, 0, sizeof( expr->val ) );
@@ -38,12 +49,22 @@ void expr_set_eof( expr_type * expr ) {
 }
 
 char * expr_get_symbol( expr_type * expr ) {
-	LSP_ASSERT( expr->type_code == EXPR_TYPE_SYMBOL, "Can only get symbol value from a symbol expression!" );
+	LSP_ASSERT( expr->type_code == EXPR_TYPE_SYMBOL, "Can only get a symbol value from a symbol expression!" );
 	return expr->val.symbol;
 }
 
 void expr_set_symbol( expr_type * expr, char * sym ) {
 	expr->type_code = EXPR_TYPE_SYMBOL;
 	expr->val.symbol = sym;
+}
+
+char * expr_get_string( expr_type * expr ) {
+	LSP_ASSERT( expr->type_code == EXPR_TYPE_STRING, "Can only get a string value from a string expression!" );
+	return expr->val.symbol;
+}
+
+void expr_set_string( expr_type * expr, char * str ) {
+	expr->type_code = EXPR_TYPE_STRING;
+	expr->val.symbol = str;
 }
 
