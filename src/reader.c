@@ -2,27 +2,10 @@
 
 #include <lsp_assert.h>
 #include <lsp_print.h>
+#include <lsp_util.h>
 
 #include <errno.h>
 #include <string.h>
-
-#ifndef strndup
-char * strndup( char const * s, size_t n ) {
-	char * ret = malloc( n + 1 );
-	if( !ret ) {
-		errno = ENOMEM;
-		return NULL;
-	}
-
-	char * itr = ret;
-	while( n-- && *s ) {
-		*itr++ = *s++;
-	}
-	*itr = 0;
-
-	return ret;
-}
-#endif
 
 int reader_init( reader_type * rdr, FILE * from ) {
 	rdr->buf = make_char_buffer( from );
