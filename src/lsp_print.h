@@ -10,7 +10,7 @@
 #define TRACE( msg, ... )
 #endif
 
-#if defined(LSP_DEBUG)
+#if defined(LSP_DEBUG) || defined(LSP_TRACE)
 #define DEBUG( msg, ... ) \
 	fprintf( stderr, "debug: " __FILE__ " " msg "\n", ##__VA_ARGS__ )
 #else
