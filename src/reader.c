@@ -8,7 +8,7 @@
 
 #ifndef strndup
 char * strndup( char const * s, size_t n ) {
-	char * ret = malloc( n );
+	char * ret = malloc( n + 1 );
 	if( !ret ) {
 		errno = ENOMEM;
 		return NULL;
