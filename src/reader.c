@@ -64,6 +64,15 @@ int reader_read_next( reader_type * rdr, expr_type * result ) {
 	}
 	rdr->callbacks.on_symbol = &yield_symbol;
 
+	void yield_string( char const * str, size_t n ) {
+		char * mystr = strndup( str, n );
+		if( !mystr ) {
+			LSP_ABORT( "couldn't allocate memory to copy a string!" );
+		}
+		expr_set_string( result, mystr );
+	}
+	rdr->callbacks.on_string = &yield_string;
+
 	while( 1 ) {
 		size_t num_read;
 		DEBUG( "going to scan" );
@@ -99,6 +108,7 @@ int reader_read_next( reader_type * rdr, expr_type * result ) {
 				// Before returning 'scanner_scan_token', the scanner will have
 				// invoked the appropriated callback closure to assign a
 				// meaningful value to 'result'.
+				TRACE( "seeking char buffer by %zd", num_read );
 				char_buffer_seek( rdr->buf, num_read );
 				return read_result_ok;
 			}

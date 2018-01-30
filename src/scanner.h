@@ -6,6 +6,7 @@
 typedef struct {
 	void (*on_int)( int n );
 	void (*on_symbol)( char const * s, size_t n );
+	void (*on_string)( char const * s, size_t n );
 } scanner_callback_type;
 
 struct scanner_struct_type;
