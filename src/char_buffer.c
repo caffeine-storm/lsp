@@ -94,7 +94,7 @@ int guarantee_extra_space( char_buffer_type * buf, size_t request ) {
 	return 0;
 }
 
-size_t char_buffer_more( char_buffer_type * buf ) {
+size_t char_buffer_more( char_buffer_type * buf, void (*prompt_fn)() ) {
 	// Extend 'data' with more bytes from the input stream.
 	DEBUG( "eof?" );
 	if( char_buffer_eof( buf ) ) {
@@ -109,6 +109,7 @@ size_t char_buffer_more( char_buffer_type * buf ) {
 	}
 
 	DEBUG( "going to fgets..." );
+	prompt_fn();
 	char * s = fgets( buf->end, 512, buf->from );
 	if( !s ) {
 		if( feof( buf->from ) ) {

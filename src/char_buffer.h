@@ -16,7 +16,7 @@ char_buffer_type * make_char_buffer( FILE * from );
 void kill_char_buffer( char_buffer_type * buf );
 
 size_t char_buffer_buffered( char_buffer_type const * buf );
-size_t char_buffer_more( char_buffer_type * buf );
+size_t char_buffer_more( char_buffer_type * buf, void (*prompt_fn)() );
 void char_buffer_seek( char_buffer_type * buf, size_t n );
 int char_buffer_eof( char_buffer_type const * buf );
 

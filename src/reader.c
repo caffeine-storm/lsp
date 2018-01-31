@@ -27,12 +27,12 @@ void reader_denit( reader_type * rdr ) {
 	kill_char_buffer( rdr->buf );
 }
 
-int reader_read_next( reader_type * rdr, expr_type * result ) {
+int reader_read_next( reader_type * rdr, expr_type * result, void (*prompt_fn)() ) {
 	int ret = 0;
 	// If nothing is buffered yet, pull more characters from the input stream
 	if( !char_buffer_buffered( rdr->buf ) ) {
 		DEBUG( "nothing buffered" );
-		ret = char_buffer_more( rdr->buf );
+		ret = char_buffer_more( rdr->buf, prompt_fn );
 		DEBUG( "buffer_more returned %d", ret );
 		if( !ret ) {
 			// Was that eof, or error?
@@ -89,7 +89,7 @@ int reader_read_next( reader_type * rdr, expr_type * result ) {
 				// The scanner hit the end of the buffer but wasn't in a
 				// rejecting state... need to buffer more data and continue
 				// scanning.
-				ret = char_buffer_more( rdr->buf );
+				ret = char_buffer_more( rdr->buf, prompt_fn );
 				if( !ret ) {
 					// eof?
 					if( char_buffer_eof( rdr->buf ) ) {

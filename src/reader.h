@@ -22,6 +22,6 @@ typedef struct {
 int reader_init( reader_type * rdr, FILE * from );
 void reader_denit( reader_type * rdr );
 
-int reader_read_next( reader_type * rdr, expr_type * result );
+int reader_read_next( reader_type * rdr, expr_type * result, void (*prompt_fn)() );
 
 #endif

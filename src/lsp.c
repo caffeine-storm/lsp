@@ -35,6 +35,10 @@ void print_prompt( FILE * out ) {
 	fprintf( out, "> " );
 }
 
+void stdout_prompt() {
+	print_prompt( stdout );
+}
+
 int eval( stack_type * stack, namespace_type * ns, expr_type * expr ) {
 	(void) stack;
 	switch( expr->type_code ) {
@@ -121,20 +125,18 @@ int main( int argc, char * * argv ) {
 	namespace_init( &ns );
 
 	namespace_bind( &ns, ".", print_fn );
-	namespace_bind( &ns, ":s", print_stack );
+	namespace_bind( &ns, ".s", print_stack );
 	namespace_bind( &ns, "exit", exit_fn );
 
 	reader_type reader;
 	ret = reader_init( &reader, stdin );
 
 	while( 1 ) {
-		print_prompt( stdout );
-
 		expr_type * expr = malloc( sizeof( expr_type ) );
 		expr_init( expr );
 
 		TRACE( "going to read next" );
-		ret = reader_read_next( &reader, expr );
+		ret = reader_read_next( &reader, expr, &stdout_prompt );
 		TRACE( "read returned %d", ret );
 		switch( ret ) {
 			case read_result_fail:
@@ -179,12 +181,6 @@ int main( int argc, char * * argv ) {
 		}
 
 		last_status = ret;
-		TRACE( "debug: going to print top of stack" );
-		if( stack_size( &stack ) > 0 ) {
-			expr_type * top = stack_top( &stack );
-			printf( "tos: " );
-			printer_print( &printer, top, stdout );
-		}
 	}
 
 	return 0;
