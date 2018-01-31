@@ -1,6 +1,8 @@
 BIN:=lsp
 OBJECTS:=$(patsubst src/%.c,obj/%.o,$(wildcard src/*.c))
-CFLAGS:=-std=c11 -Wall -Wextra -g -Isrc/
+DEPS:=${OBJECTS:.o=.d}
+CPPFLAGS:=-Isrc/
+CFLAGS:=-std=c11 -Wall -Wextra -g
 DEBUG_CFLAGS:=${CFLAGS} -DLSP_DEBUG
 TRACE_CFLAGS:=${CFLAGS} -DLSP_TRACE
 LDFLAGS:=-std=c11
@@ -13,8 +15,14 @@ check: ${BIN}
 obj:
 	mkdir -p obj
 
+obj/%.d: src/%.c |obj
+	${CC} ${CPPFLAGS} ${CFLAGS} -MM $< -o $@
+	sed -i $@ -e 's,${@:.d=.o},${@:.d=.o} $@,'
+
+-include ${DEPS}
+
 obj/%.o: src/%.c |obj
-	${CC} ${CFLAGS} -c $< -o $@
+	${CC} ${CPPFLAGS} ${CFLAGS} -c $< -o $@
 
 ${BIN}: ${OBJECTS}
 	${CC} -o $@ ${LDFLAGS} $^
