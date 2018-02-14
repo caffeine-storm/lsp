@@ -15,9 +15,12 @@ check: ${BIN}
 obj:
 	mkdir -p obj
 
+# Build '.d' makefiles that force .o targets to depend on their .c and any
+# relevant .h files.
 obj/%.d: src/%.c |obj
-	${CC} ${CPPFLAGS} ${CFLAGS} -MM $< -o $@
-	sed -i $@ -e 's,${@:.d=.o},${@:.d=.o} $@,'
+	@${CC} ${CPPFLAGS} ${CFLAGS} -MM $< -o $@
+	@sed -i $@ -e 's,${@:.d=.o},${@:.d=.o} $@,'
+	@sed -i $@ -e '1s,^,obj/,'
 
 -include ${DEPS}
 
