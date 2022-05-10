@@ -6,7 +6,7 @@
 
 #include <stdlib.h>
 
-typedef void (*callable_type)( stack_type * s );
+typedef void (*callable_type)( stack_type * s, void* extra );
 
 struct hash_struct;
 
@@ -16,7 +16,7 @@ typedef struct {
 
 int namespace_init( namespace_type * ns );
 
-int namespace_bind( namespace_type * ns, char const * name, void (*fn)( stack_type * s ) );
+int namespace_bind( namespace_type * ns, char const * name, callable_type fn );
 int namespace_unbind( namespace_type * ns, char const * name );
 
 callable_type namespace_get_symbol( namespace_type * ns, char const * name );

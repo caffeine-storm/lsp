@@ -7,6 +7,36 @@
 #include <errno.h>
 #include <string.h>
 
+struct int_callback_closure {
+  expr_type * result;
+};
+void yield_int( int n, struct int_callback_closure * c ) {
+  DEBUG( "reader: yielding int (%d)", n );
+  expr_set_int( c->result, n );
+}
+
+struct symbol_callback_closure {
+  expr_type * result;
+};
+void yield_symbol( char const * str, size_t n, struct symbol_callback_closure * c ) {
+  char * mystr = strndup( str, n );
+  if( !mystr ) {
+    LSP_ABORT( "couldn't allocate memory to copy a symbol!" );
+  }
+  expr_set_symbol( c->result, mystr );
+}
+
+struct string_callback_closure {
+  expr_type * result;
+};
+void yield_string( char const * str, size_t n, struct string_callback_closure * c ) {
+  char * mystr = strndup( str, n );
+  if( !mystr ) {
+    LSP_ABORT( "couldn't allocate memory to copy a string!" );
+  }
+  expr_set_string( c->result, mystr );
+}
+
 int reader_init( reader_type * rdr, FILE * from ) {
   rdr->buf = make_char_buffer( from );
   if( !rdr->buf ) {
@@ -25,6 +55,15 @@ int reader_init( reader_type * rdr, FILE * from ) {
 void reader_denit( reader_type * rdr ) {
   kill_scanner( rdr->scanner );
   kill_char_buffer( rdr->buf );
+  if (rdr->callbacks.int_callback_closure_) {
+    free(rdr->callbacks.int_callback_closure_);
+  }
+  if (rdr->callbacks.string_callback_closure_) {
+    free(rdr->callbacks.string_callback_closure_);
+  }
+  if (rdr->callbacks.symbol_callback_closure_) {
+    free(rdr->callbacks.symbol_callback_closure_);
+  }
 }
 
 int reader_read_next( reader_type * rdr, expr_type * result, void (*prompt_fn)() ) {
@@ -49,29 +88,26 @@ int reader_read_next( reader_type * rdr, expr_type * result, void (*prompt_fn)()
   char const * begin = char_buffer_begin( rdr->buf );
   char const * end = char_buffer_end( rdr->buf );
 
-  void yield_int( int n ) {
-    DEBUG( "reader: yielding int (%d)", n );
-    expr_set_int( result, n );
-  }
   rdr->callbacks.on_int = &yield_int;
-
-  void yield_symbol( char const * str, size_t n ) {
-    char * mystr = strndup( str, n );
-    if( !mystr ) {
-      LSP_ABORT( "couldn't allocate memory to copy a symbol!" );
-    }
-    expr_set_symbol( result, mystr );
+  rdr->callbacks.int_callback_closure_ = malloc(sizeof(struct int_callback_closure));
+  if (!rdr->callbacks.int_callback_closure_) {
+    LSP_ABORT( "couldn't allocate memory for int_callback_closure" );
   }
+  rdr->callbacks.int_callback_closure_->result = result;
+
   rdr->callbacks.on_symbol = &yield_symbol;
-
-  void yield_string( char const * str, size_t n ) {
-    char * mystr = strndup( str, n );
-    if( !mystr ) {
-      LSP_ABORT( "couldn't allocate memory to copy a string!" );
-    }
-    expr_set_string( result, mystr );
+  rdr->callbacks.symbol_callback_closure_ = malloc(sizeof(struct symbol_callback_closure));
+  if (!rdr->callbacks.symbol_callback_closure_) {
+    LSP_ABORT( "couldn't allocate memory for symbol_callback_closure" );
   }
+  rdr->callbacks.symbol_callback_closure_->result = result;
+
   rdr->callbacks.on_string = &yield_string;
+  rdr->callbacks.string_callback_closure_ = malloc(sizeof(struct string_callback_closure));
+  if (!rdr->callbacks.string_callback_closure_) {
+    LSP_ABORT( "couldn't allocate memory for string_callback_closure" );
+  }
+  rdr->callbacks.string_callback_closure_->result = result;
 
   while( 1 ) {
     size_t num_read;

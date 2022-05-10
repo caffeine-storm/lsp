@@ -61,22 +61,22 @@ int parse_int( char const * begin, char const * end, int * out ) {
   return 0;
 }
 
+static int is_whitespace( char c ) {
+  switch( c ) {
+    case ' ':
+    case '\t':
+    case '\n':
+      return 1;
+    default:
+      return 0;
+  }
+}
+
 int scanner_scan( scanner_type * scanner, char const * begin, char const * end, size_t * num_read, scanner_callback_type * callbacks ) {
   (void) scanner;
 
   if( begin == end ) {
     return scanner_scan_more;
-  }
-
-  int is_whitespace( char c ) {
-    switch( c ) {
-      case ' ':
-      case '\t':
-      case '\n':
-        return 1;
-      default:
-        return 0;
-    }
   }
 
   *num_read = 0;
@@ -107,7 +107,7 @@ int scanner_scan( scanner_type * scanner, char const * begin, char const * end, 
         }
         case '"': {
           ++(*num_read);
-          callbacks->on_string( begin + 1, *num_read - 2 );
+          callbacks->on_string( begin + 1, *num_read - 2, callbacks->string_callback_closure_ );
           return scanner_scan_token;
         }
         default: {
@@ -141,7 +141,7 @@ int scanner_scan( scanner_type * scanner, char const * begin, char const * end, 
       if( ret ) {
         return scanner_scan_reject;
       }
-      callbacks->on_int( parsed );
+      callbacks->on_int( parsed, callbacks->int_callback_closure_ );
       *num_read = itr - begin;
       TRACE( "scanned an int" );
       return scanner_scan_token;
@@ -150,7 +150,7 @@ int scanner_scan( scanner_type * scanner, char const * begin, char const * end, 
 
   // Everything else is a symbol!
   *num_read = itr - begin;
-  callbacks->on_symbol( begin, *num_read );
+  callbacks->on_symbol( begin, *num_read, callbacks->symbol_callback_closure_ );
   TRACE( "scanned a symbol ('%s') of length %zd", begin, *num_read );
   return scanner_scan_token;
 }

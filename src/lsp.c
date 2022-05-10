@@ -31,6 +31,51 @@ int status_to_rc( int s ) {
   }
 }
 
+void print_fn(stack_type* s, void* printer_as_void) {
+  printer_type* printer = (printer_type*) printer_as_void;
+  if( stack_size( s ) < 1 ) {
+    fprintf( stderr, "error: stack underflow\n" );
+    return;
+  }
+  expr_type * e = stack_top( s );
+  printer_print( printer, e, stdout );
+  stack_pop( s );
+  kill_expr( e );
+}
+
+void print_stack( stack_type * s, void * printer_as_void ) {
+  printer_type* printer = (printer_type*) printer_as_void;
+  size_t sz = stack_size( s );
+  if( sz == 0 ) {
+    expr_type * e = make_expr();
+    char * s = strdup( "<empty stack>" );
+    expr_set_symbol( e, s );
+    printer_print( printer, e, stdout );
+    kill_expr( e );
+    return;
+  }
+  while( sz-- ) {
+    expr_type * e = stack_at( s, sz );
+    printer_print( printer, e, stdout );
+  }
+}
+
+void exit_fn( stack_type * s, void * unused) {
+  ((void) unused);
+  if( stack_size( s ) < 1 ) {
+    fprintf( stderr, "error: stack underflow\n" );
+    return;
+  }
+
+  expr_type * e = stack_top( s );
+  if( e->type_code != EXPR_TYPE_INT ) {
+    fprintf( stderr, "error: can't apply 'exit' to non-int\n" );
+    return;
+  }
+
+  exit( expr_get_int( e ) );
+}
+
 void print_prompt( FILE * out ) {
   fprintf( out, "> " );
 }
@@ -39,7 +84,7 @@ void stdout_prompt() {
   print_prompt( stdout );
 }
 
-int eval( stack_type * stack, namespace_type * ns, expr_type * expr ) {
+int eval( stack_type * stack, namespace_type * ns, expr_type * expr, printer_type * printer ) {
   (void) stack;
   switch( expr->type_code ) {
     case EXPR_TYPE_EOF:
@@ -52,7 +97,7 @@ int eval( stack_type * stack, namespace_type * ns, expr_type * expr ) {
         printf( "symbol lookup failure for '%s'\n", expr->val.symbol );
         return EVAL_ERROR;
       }
-      (*entry)( stack );
+      (*entry)( stack, printer );
       return EVAL_CONTINUE;
     }
     case EXPR_TYPE_INT:
@@ -79,54 +124,12 @@ int main( int argc, char * * argv ) {
   stack_type stack;
   stack_init( &stack );
 
-  void print_fn( stack_type * s ) {
-    if( stack_size( s ) < 1 ) {
-      fprintf( stderr, "error: stack underflow\n" );
-      return;
-    }
-    expr_type * e = stack_top( s );
-    printer_print( &printer, e, stdout );
-    stack_pop( s );
-    kill_expr( e );
-  }
-
-  void print_stack( stack_type * s ) {
-    size_t sz = stack_size( s );
-    if( sz == 0 ) {
-      expr_type * e = make_expr();
-      char * s = strdup( "<empty stack>" );
-      expr_set_symbol( e, s );
-      printer_print( &printer, e, stdout );
-      kill_expr( e );
-      return;
-    }
-    while( sz-- ) {
-      expr_type * e = stack_at( s, sz );
-      printer_print( &printer, e, stdout );
-    }
-  }
-
-  void exit_fn( stack_type * s ) {
-    if( stack_size( s ) < 1 ) {
-      fprintf( stderr, "error: stack underflow\n" );
-      return;
-    }
-
-    expr_type * e = stack_top( s );
-    if( e->type_code != EXPR_TYPE_INT ) {
-      fprintf( stderr, "error: can't apply 'exit' to non-int\n" );
-      return;
-    }
-
-    exit( expr_get_int( e ) );
-  }
-
   namespace_type ns;
   namespace_init( &ns );
 
-  namespace_bind( &ns, ".", print_fn );
-  namespace_bind( &ns, ".s", print_stack );
-  namespace_bind( &ns, "exit", exit_fn );
+  namespace_bind( &ns, ".", print_fn);
+  namespace_bind( &ns, ".s", print_stack);
+  namespace_bind( &ns, "exit", exit_fn);
 
   reader_type reader;
   ret = reader_init( &reader, stdin );
@@ -151,7 +154,7 @@ int main( int argc, char * * argv ) {
         ;
     }
 
-    ret = eval( &stack, &ns, expr );
+    ret = eval( &stack, &ns, expr, &printer );
     switch( ret ) {
       case EVAL_PUSH_EXPR: {
         stack_push( &stack, expr );

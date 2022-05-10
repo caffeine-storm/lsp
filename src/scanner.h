@@ -3,10 +3,17 @@
 
 #include <stdlib.h>
 
+struct int_callback_closure;
+struct symbol_callback_closure;
+struct string_callback_closure;
+
 typedef struct {
-  void (*on_int)( int n );
-  void (*on_symbol)( char const * s, size_t n );
-  void (*on_string)( char const * s, size_t n );
+  void (*on_int)( int n, struct int_callback_closure * c );
+  struct int_callback_closure* int_callback_closure_;
+  void (*on_symbol)( char const * s, size_t n, struct symbol_callback_closure * c );
+  struct symbol_callback_closure* symbol_callback_closure_;
+  void (*on_string)( char const * s, size_t n, struct string_callback_closure * c );
+  struct string_callback_closure* string_callback_closure_;
 } scanner_callback_type;
 
 struct scanner_struct_type;

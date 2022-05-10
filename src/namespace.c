@@ -230,7 +230,7 @@ int namespace_init( namespace_type * ns ) {
   return 0;
 }
 
-int namespace_bind( namespace_type * ns, char const * name, callable_type fn ) {
+int namespace_bind( namespace_type * ns, char const * name, callable_type fn) {
   size_t sz = strlen( name ) + 1;
   char * name_copy = malloc( sz );
   if( !name_copy ) {
