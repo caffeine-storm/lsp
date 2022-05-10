@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 void lsp_abort( char const * const filename, int lineno, char const * msg ) {
-	fprintf( stderr, "LSP-ABORT: %s:%d: %s\n", filename, lineno, msg );
-	exit( 2 );
+  fprintf( stderr, "LSP-ABORT: %s:%d: %s\n", filename, lineno, msg );
+  exit( 2 );
 }
 

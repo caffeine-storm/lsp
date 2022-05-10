@@ -8,15 +8,15 @@
 #include <stdio.h>
 
 enum read_result {
-	read_result_ok,
-	read_result_fail,
-	read_result_fatal
+  read_result_ok,
+  read_result_fail,
+  read_result_fatal
 };
 
 typedef struct {
-	char_buffer_type * buf;
-	scanner_type * scanner;
-	scanner_callback_type callbacks;
+  char_buffer_type * buf;
+  scanner_type * scanner;
+  scanner_callback_type callbacks;
 } reader_type;
 
 int reader_init( reader_type * rdr, FILE * from );

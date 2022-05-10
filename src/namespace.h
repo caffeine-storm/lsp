@@ -11,7 +11,7 @@ typedef void (*callable_type)( stack_type * s );
 struct hash_struct;
 
 typedef struct {
-	struct hash_struct * table;
+  struct hash_struct * table;
 } namespace_type;
 
 int namespace_init( namespace_type * ns );
